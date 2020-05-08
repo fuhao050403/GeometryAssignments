@@ -127,7 +127,7 @@ class assign3A
         double volnme = 0f;
         for(int i = 0; i < num_of_faces; i++)
         {
-            // Get all 9 vertices of current face
+            // Get all 3 vertices(9 value for XYZ) of current face
             double[][] v = new double[3][3];
             
             for(int row = 0; row < 3; row++)
