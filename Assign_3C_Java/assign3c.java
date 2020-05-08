@@ -1,5 +1,5 @@
 /*************************************************************
-* Java program for assignment 3A
+* Java program for assignment 3C
 * Student: Fu Hao(20N8100013G)
 * Chuo University
 * Information and System Engineering(Makino Lab)
@@ -7,6 +7,7 @@
 **************************************************************/
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 class fileManager
@@ -16,7 +17,7 @@ class fileManager
         try
         {
             File file = new File(System.getProperty("user.home") + "/Desktop", "Result.txt");
-            // Create Result.txt file to the desktop
+            // Create result file to the desktop
             if(file.createNewFile())
             {
                 System.out.println("File created: " + file.getName());
@@ -42,8 +43,8 @@ class assign3A
 {
     public static void main(String[] args) throws FileNotFoundException
     {
-        // Read data from file "lion.off" on Desktop
-        File file = new File(System.getProperty("user.home") + "/Desktop", "lion.off");
+        // Read data from file "lion_hollowed.off" on Desktop
+        File file = new File(System.getProperty("user.home") + "/Desktop", "lion_hollowed.off");
         if(!file.exists()) { System.out.println("lion.off is not existed on desktop."); return; }
         Scanner s = new Scanner(file);
         s.nextLine(); // Skip first line of context
@@ -69,6 +70,8 @@ class assign3A
         s.close(); // Close lion.off filestream
 
         int good_try = 0; // Count how many face is integrated
+        int num_bad_edge = 0; // Count how many unintegrated edge is existing
+        ArrayList<String> bad_edge = new ArrayList<String>(); // Storing bad edge vertices
         int[][] v_index = { {0, 1}, {1, 2}, {2, 0} }; // define vertex sequence of all three edges in one face
 
         /*************************************************************
@@ -87,6 +90,8 @@ class assign3A
                 int v1 = vertices[i][v_index[j][0]];
                 int v2 = vertices[i][v_index[j][1]];
 
+                boolean is_integrated_edge = false;
+
                 for(int n = 0; n < num_of_faces; n++) // O(n)
                 {
                     // Run thought all edges and try to find the matched edge
@@ -96,14 +101,25 @@ class assign3A
                     int _v3 = vertices[n][2];
 
                     // Check if integrated edge is existing or not
-                    if(_v1 == v2 && _v2 == v1) { number_of_integrated_faces++; continue; }
-                    else if(_v3 == v1 && _v2 == v2) { number_of_integrated_faces++; continue; }
-                    else if(_v1 == v1 && _v3 == v2) { number_of_integrated_faces++; continue; }
+                    if(_v1 == v2 && _v2 == v1) { number_of_integrated_faces++; is_integrated_edge = true; continue; }
+                    else if(_v3 == v1 && _v2 == v2) { number_of_integrated_faces++; is_integrated_edge = true; continue; }
+                    else if(_v1 == v1 && _v3 == v2) { number_of_integrated_faces++; is_integrated_edge = true; continue; }
+                }
+
+                if(!is_integrated_edge)
+                {
+                    num_bad_edge++;
+                    bad_edge.add(v1 + " " + v2);
                 }
             }
 
             // If find 3 matched face,which means current face is integrated with all three faces around
             if(number_of_integrated_faces == 3) { good_try++; }
+        }
+
+        for(int i = 0; i < bad_edge.size(); i++)
+        {
+            System.out.println(bad_edge.get(i));
         }
 
         // Create result file(mesh2C.off)
@@ -123,7 +139,7 @@ class assign3A
             "頂点数: " + num_of_vertices + "\n" +
             "面数: " + num_of_faces + "\n" +
             "整合的な面数: " + good_try + "\n" +
-            "整合的でない面数: " + (num_of_faces - good_try) + "\n" +
+            "整合的でない面数: " + num_bad_edge + "\n" +
             "結論: 本メッシュは整合的であることと、メッシュの面の向きが正しいことがわかった." + "\n\n" +
             "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2) = O(9n^2 + 3n) = O(n^2)";
         }
@@ -136,7 +152,7 @@ class assign3A
             "頂点数: " + num_of_vertices + "\n" +
             "面数: " + num_of_faces + "\n" +
             "整合的な面数: " + good_try + "\n" +
-            "整合的でない面数: " + (num_of_faces - good_try) + "\n" +
+            "整合的でない面数: " + num_bad_edge + "\n" +
             "結論: 本メッシュは整合的でないことと、メッシュの面の向きが正しくないことがわかった." + "\n\n" +
             "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2) = O(9n^2 + 3n) = O(n^2)";
         }

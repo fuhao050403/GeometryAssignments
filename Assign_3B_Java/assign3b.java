@@ -1,5 +1,5 @@
 /*************************************************************
-* Java program for assignment 3A
+* Java program for assignment 3B
 * Student: Fu Hao(20N8100013G)
 * Chuo University
 * Information and System Engineering(Makino Lab)
@@ -54,8 +54,16 @@ class assign3A
         String str_num_of_faces = s.next();
         int num_of_faces = Integer.parseInt(str_num_of_faces);
 
-        // Skip the vertices part
-        for(int i = 0; i <= num_of_vertices; i++) { s.nextLine(); }
+        s.nextLine(); // Skip '0' at the end of 2th line
+
+        // Storing vertices
+        double[][] vertex = new double[num_of_vertices][3];
+        for(int i = 0; i < num_of_vertices; i++)
+        {
+            vertex[i][0] = s.nextDouble();
+            vertex[i][1] = s.nextDouble();
+            vertex[i][2] = s.nextDouble();
+        }
 
         // Define variable 'vertices' for storing all vertices value that lion.off has
         int[][] vertices = new int[num_of_faces][3];
@@ -73,8 +81,10 @@ class assign3A
         int[][] v_index = { {0, 1}, {1, 2}, {2, 0} }; // define vertex sequence of all three edges in one face
 
         /*************************************************************
-        * Time complexity: O(3n + (3n)^2) = O(9n^2 + 3n) = O(n^2)
+        * Time complexity: O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)
         **************************************************************/
+
+        // Check mesh is integrated or not
         for(int i = 0; i < num_of_faces; i++) // O(n)
         {
             // Calculate every face one by one
@@ -110,6 +120,40 @@ class assign3A
             if(number_of_integrated_faces == 3) { good_try++; }
         }
 
+        /*************************************************************
+        * Calculate Signed Volnme
+        * Set arbitrary point P as (0, 0, 0)
+        **************************************************************/
+        double volnme = 0f;
+        for(int i = 0; i < num_of_faces; i++)
+        {
+            // Get all 9 vertices of current face
+            double[][] v = new double[3][3];
+            
+            for(int row = 0; row < 3; row++)
+            {
+                for(int col = 0; col < 3; col++)
+                {
+                    v[row][col] = vertex[vertices[i][row]][col];
+                }
+            }
+
+            // Calculate Determinant
+            double det = 
+                  v[0][0] * v[1][1] * v[2][2]
+                + v[0][1] * v[1][2] * v[2][0]
+                + v[1][0] * v[2][1] * v[0][2]
+                - v[0][2] * v[1][1] * v[2][0]
+                - v[0][0] * v[1][2] * v[2][1]
+                - v[0][1] * v[1][0] * v[2][2];
+            
+            // Add to final result
+            volnme += det / 6;
+        }
+
+        boolean all_facing_are_right = false;
+        if(volnme > 0) { all_facing_are_right = true; }
+
         // Create result file(mesh2C.off)
         try { fileManager.CreateResultFile(); }
         catch(IOException exc) { System.out.println("Error: " + exc.getMessage()); }
@@ -117,8 +161,8 @@ class assign3A
         // Initializing PrintWriter instance for writing data to result file
         PrintWriter pw = new PrintWriter(System.getProperty("user.home") + "/Desktop/Result.txt");
 
-        String res_str;
-        if(good_try == num_of_faces) // Output result file
+        String res_str = "";
+        if((good_try == num_of_faces) && all_facing_are_right) // Output result file
         {
             System.out.println("All edges and faces are integrated!");
 
@@ -128,10 +172,11 @@ class assign3A
             "面数: " + num_of_faces + "\n" +
             "整合的な面数: " + good_try + "\n" +
             "整合的でない面数: " + bad_edge + "\n" +
-            "結論: 本メッシュは整合的であることがわかった." + "\n\n" +
-            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2) = O(9n^2 + 3n) = O(n^2)";
+            "符号付き体積値: " + volnme + "\n" +
+            "結論: 本メッシュは整合的であることと、メッシュの面の向きが正しいことがわかった." + "\n\n" +
+            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
         }
-        else
+        else if((good_try == num_of_faces) && !all_facing_are_right)
         {
             System.out.println("This mesh is not integrated!");
 
@@ -141,8 +186,22 @@ class assign3A
             "面数: " + num_of_faces + "\n" +
             "整合的な面数: " + good_try + "\n" +
             "整合的でない面数: " + bad_edge + "\n" +
-            "結論: 本メッシュは整合的でないことがわかった." + "\n\n" +
-            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2) = O(9n^2 + 3n) = O(n^2)";
+            "符号付き体積値: " + volnme + "\n" +
+            "結論: 本メッシュは整合的であるが、メッシュの面の向きが正しくないことがわかった." + "\n\n" +
+            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
+        }
+        else if(good_try != num_of_faces)
+        {
+            System.out.println("This mesh is not integrated!");
+
+            res_str =
+            "メッシュのファイル名: " + file.getName() + "\n" +
+            "頂点数: " + num_of_vertices + "\n" +
+            "面数: " + num_of_faces + "\n" +
+            "整合的な面数: " + good_try + "\n" +
+            "整合的でない面数: " + bad_edge + "\n" +
+            "結論: 本メッシュは整合的でないため、メッシュの面の向きについて判断はしない." + "\n\n" +
+            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
         }
         pw.println(res_str);
         pw.close();
