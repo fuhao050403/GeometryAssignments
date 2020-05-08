@@ -161,47 +161,41 @@ class assign3A
         // Initializing PrintWriter instance for writing data to result file
         PrintWriter pw = new PrintWriter(System.getProperty("user.home") + "/Desktop/Result.txt");
 
-        String res_str = "";
-        if((good_try == num_of_faces) && all_facing_are_right) // Output result file
-        {
-            System.out.println("All edges and faces are integrated!");
-
-            res_str =
+        String res_str =
             "メッシュのファイル名: " + file.getName() + "\n" +
             "頂点数: " + num_of_vertices + "\n" +
-            "面数: " + num_of_faces + "\n" +
-            "整合的な面数: " + good_try + "\n" +
-            "整合的でない面数: " + bad_edge + "\n" +
-            "符号付き体積値: " + volnme + "\n" +
-            "結論: 本メッシュは整合的であることと、メッシュの面の向きが正しいことがわかった." + "\n\n" +
-            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
+            "面数: " + num_of_faces + "\n";
+        if((good_try == num_of_faces) && all_facing_are_right) // Output result file
+        {
+            System.out.println("This mesh is integrated and correct facing!");
+
+            res_str +=
+                "整合的な面数: " + good_try + "\n" +
+                "整合的でない面数: " + bad_edge + "\n" +
+                "符号付き体積値: " + volnme + "\n" +
+                "結論: 本メッシュは整合的であることと、メッシュの面の向きが正しいことがわかった." + "\n\n" +
+                "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
         }
         else if((good_try == num_of_faces) && !all_facing_are_right)
         {
-            System.out.println("This mesh is not integrated!");
+            System.out.println("This mesh is integrated, but isn't correct facing!");
 
-            res_str =
-            "メッシュのファイル名: " + file.getName() + "\n" +
-            "頂点数: " + num_of_vertices + "\n" +
-            "面数: " + num_of_faces + "\n" +
-            "整合的な面数: " + good_try + "\n" +
-            "整合的でない面数: " + bad_edge + "\n" +
-            "符号付き体積値: " + volnme + "\n" +
-            "結論: 本メッシュは整合的であるが、メッシュの面の向きが正しくないことがわかった." + "\n\n" +
-            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
+            res_str +=
+                "整合的な面数: " + good_try + "\n" +
+                "整合的でない面数: " + bad_edge + "\n" +
+                "符号付き体積値: " + volnme + "\n" +
+                "結論: 本メッシュは整合的であるが、メッシュの面の向きが正しくないことがわかった." + "\n\n" +
+                "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
         }
         else if(good_try != num_of_faces)
         {
             System.out.println("This mesh is not integrated!");
 
-            res_str =
-            "メッシュのファイル名: " + file.getName() + "\n" +
-            "頂点数: " + num_of_vertices + "\n" +
-            "面数: " + num_of_faces + "\n" +
-            "整合的な面数: " + good_try + "\n" +
-            "整合的でない面数: " + bad_edge + "\n" +
-            "結論: 本メッシュは整合的でないため、メッシュの面の向きについて判断はしない." + "\n\n" +
-            "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
+            res_str +=
+                "整合的な面数: " + good_try + "\n" +
+                "整合的でない面数: " + bad_edge + "\n" +
+                "結論: 本メッシュは整合的でないため、メッシュの面の向きについて判断はしない." + "\n\n" +
+                "計算複雑度(最悪のアルゴリズムによる): O(3n + (3n)^2 + 3*3*n) = O(9n^2 + 12n) = O(n^2)";
         }
         pw.println(res_str);
         pw.close();
