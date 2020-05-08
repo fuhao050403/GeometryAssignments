@@ -70,9 +70,9 @@ class assign3A
         for(int i = 0; i < num_of_faces; i++) // O(3 * n) = O(n)
         {
             s.next(); // Skip first 'number of vertice' part of current line
-            vertices[i][0] = Integer.parseInt(s.next());
-            vertices[i][1] = Integer.parseInt(s.next());
-            vertices[i][2] = Integer.parseInt(s.next());
+            vertices[i][0] = s.nextInt();
+            vertices[i][1] = s.nextInt();
+            vertices[i][2] = s.nextInt();
         }
         s.close(); // Close lion.off filestream
 
