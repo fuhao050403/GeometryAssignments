@@ -38,7 +38,7 @@ class fileManager
     }
 }
 
-class assign3A
+class assign3B
 {
     public static void main(String[] args) throws FileNotFoundException
     {
